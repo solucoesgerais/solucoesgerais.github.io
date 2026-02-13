@@ -1,48 +1,226 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fazlista - Versão Gratuita</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #f4f4f4;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-top: 50px;
-            width: 300px;
-        }
-        h1 { color: #333; }
-        .pro-link {
-            margin-top: 20px;
-            font-size: 0.8em;
-            color: #666;
-            text-decoration: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPA System</title>
+
+<style>
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #0f172a;
+  color: white;
+  overflow-x: hidden;
+}
+
+/* ===== NAV ===== */
+nav {
+  width: 100%;
+  padding: 15px 40px;
+  background: #111827;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav h2 {
+  color: #38bdf8;
+}
+
+nav button {
+  padding: 8px 16px;
+  border: none;
+  background: #38bdf8;
+  color: black;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+nav button:hover {
+  opacity: 0.8;
+}
+
+/* ===== CONTAINER ===== */
+#app {
+  padding: 60px 40px;
+  min-height: calc(100vh - 70px);
+  transition: opacity .3s ease, transform .3s ease;
+}
+
+/* ===== TRANSIÇÃO ===== */
+.fade-out {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== LANDING ===== */
+.hero {
+  max-width: 600px;
+}
+
+.hero h1 {
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  margin-bottom: 30px;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.hero button {
+  padding: 12px 24px;
+  border: none;
+  background: #22c55e;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+/* ===== SISTEMA ===== */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  background: #334155;
+}
+
+/* ===== 404 ===== */
+.notfound {
+  text-align: center;
+  margin-top: 80px;
+}
+</style>
 </head>
+
 <body>
 
-    <div class="container">
-        <h1>Fazlista</h1>
-        <p>Minha lista de tarefas:</p>
-        <ul id="lista">
-            <li>Item de exemplo 1</li>
-            <li>Item de exemplo 2</li>
-        </ul>
-    </div>
+<nav>
+  <h2>MeuSistema</h2>
+  <div>
+    <button onclick="navigate('/')">Home</button>
+    <button onclick="navigate('/sistema')">Sistema</button>
+  </div>
+</nav>
 
-    <a href="https://seu-usuario.github.io/Fazlista/conta.html" class="pro-link">
-        Acesse sua conta ou mude para o PRO
-    </a>
+<div id="app"></div>
+
+<script>
+/* ============================
+   ROTAS
+============================ */
+const routes = {
+  "/": landingPage,
+  "/sistema": sistemaPage
+};
+
+/* ============================
+   NAVEGAÇÃO
+============================ */
+function navigate(path) {
+  history.pushState({}, "", path);
+  render();
+}
+
+window.onpopstate = render;
+
+/* ============================
+   RENDER
+============================ */
+function render() {
+  const app = document.getElementById("app");
+  const path = location.pathname;
+
+  app.classList.add("fade-out");
+
+  setTimeout(() => {
+    const page = routes[path] || notFoundPage;
+    app.innerHTML = page();
+    app.classList.remove("fade-out");
+    app.classList.add("fade-in");
+  }, 200);
+}
+
+/* ============================
+   PÁGINAS
+============================ */
+function landingPage() {
+  return `
+    <div class="hero">
+      <h1>Bem-vindo ao Meu Sistema</h1>
+      <p>
+        Essa é uma landing page explicando o produto.
+        Tudo acontece dentro do mesmo arquivo.
+        Nenhum reload é feito.
+      </p>
+      <button onclick="navigate('/sistema')">Entrar no Sistema</button>
+    </div>
+  `;
+}
+
+function sistemaPage() {
+  return `
+    <h1>Painel do Sistema</h1>
+    <br><br>
+    <div class="dashboard">
+      <div class="card">
+        <h3>Usuários</h3>
+        <p>Gerencie usuários do sistema</p>
+      </div>
+      <div class="card">
+        <h3>Relatórios</h3>
+        <p>Visualize relatórios em tempo real</p>
+      </div>
+      <div class="card">
+        <h3>Configurações</h3>
+        <p>Configure parâmetros do sistema</p>
+      </div>
+    </div>
+  `;
+}
+
+function notFoundPage() {
+  return `
+    <div class="notfound">
+      <h1>404</h1>
+      <p>Página não encontrada</p>
+      <br>
+      <button onclick="navigate('/')">Voltar</button>
+    </div>
+  `;
+}
+
+/* ============================
+   INICIALIZAÇÃO
+============================ */
+render();
+</script>
 
 </body>
 </html>
